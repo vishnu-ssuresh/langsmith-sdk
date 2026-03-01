@@ -11,7 +11,7 @@ type Request struct {
 	Path    string
 	Query   url.Values
 	Headers http.Header
-	Body    any
+	Body    []byte
 }
 
 // Response is a transport-level response envelope.
