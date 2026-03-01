@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/vishnu-ssuresh/langsmith-sdk/go/langsmith/auth"
-	"github.com/vishnu-ssuresh/langsmith-sdk/go/langsmith/transport"
+	"langsmith-sdk/go/langsmith/auth"
+	"langsmith-sdk/go/langsmith/transport"
 )
 
 const defaultEndpoint = "https://api.smith.langchain.com"
