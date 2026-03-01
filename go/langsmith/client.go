@@ -2,6 +2,8 @@ package langsmith
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"time"
 
 	"langsmith-sdk/go/langsmith/auth"
@@ -27,9 +29,21 @@ type Client struct {
 
 // NewClient wires auth and transport with safe defaults.
 func NewClient(opts ClientOptions) (*Client, error) {
-	endpoint := opts.Endpoint
-	if endpoint == "" {
-		endpoint = defaultEndpoint
+	creds, err := auth.ResolveCredentials(
+		context.Background(),
+		auth.NewStaticResolver(auth.Credentials{
+			APIKey:      opts.APIKey,
+			WorkspaceID: opts.WorkspaceID,
+			Endpoint:    opts.Endpoint,
+		}),
+		auth.NewEnvResolver(),
+		auth.NewConfigResolver(""),
+	)
+	if err != nil {
+		if errors.Is(err, auth.ErrCredentialsNotFound) {
+			return nil, fmt.Errorf("%w: api key is required", ErrInvalidConfig)
+		}
+		return nil, err
 	}
 
 	retry := transport.DefaultRetryPolicy()
@@ -37,9 +51,14 @@ func NewClient(opts ClientOptions) (*Client, error) {
 		retry.MaxAttempts = opts.RetryMax
 	}
 
+	endpoint := creds.Endpoint
+	if endpoint == "" {
+		endpoint = defaultEndpoint
+	}
+
 	resolver := auth.NewStaticResolver(auth.Credentials{
-		APIKey:      opts.APIKey,
-		WorkspaceID: opts.WorkspaceID,
+		APIKey:      creds.APIKey,
+		WorkspaceID: creds.WorkspaceID,
 		Endpoint:    endpoint,
 	})
 
@@ -51,7 +70,7 @@ func NewClient(opts ClientOptions) (*Client, error) {
 		UserAgent:   opts.UserAgent,
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %v", ErrInvalidConfig, err)
 	}
 
 	return &Client{transport: t}, nil
