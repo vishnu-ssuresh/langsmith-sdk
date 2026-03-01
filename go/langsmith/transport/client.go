@@ -3,7 +3,6 @@ package transport
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -92,14 +91,7 @@ func (c *Client) Do(ctx context.Context, req Request) (Response, error) {
 		endpoint.RawQuery = query.Encode()
 	}
 
-	var payload []byte
-	if req.Body != nil {
-		encoded, err := json.Marshal(req.Body)
-		if err != nil {
-			return Response{}, fmt.Errorf("transport: marshal request body: %w", err)
-		}
-		payload = encoded
-	}
+	payload := req.Body
 
 	creds, err := c.resolver.Resolve(ctx)
 	if err != nil {

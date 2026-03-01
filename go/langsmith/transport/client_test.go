@@ -130,7 +130,7 @@ func TestDo_SendsHeadersQueryAndBody(t *testing.T) {
 		Query: url.Values{
 			"tag": {"a", "b"},
 		},
-		Body: map[string]string{"name": "demo"},
+		Body: []byte(`{"name":"demo"}`),
 	})
 	if err != nil {
 		t.Fatalf("Do() error = %v", err)
