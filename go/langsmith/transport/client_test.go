@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/vishnu-ssuresh/langsmith-sdk/go/langsmith/auth"
+	"langsmith-sdk/go/langsmith/auth"
 )
 
 type errResolver struct {

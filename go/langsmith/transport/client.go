@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/vishnu-ssuresh/langsmith-sdk/go/langsmith/auth"
+	"langsmith-sdk/go/langsmith/auth"
 )
 
 // Options configures the shared transport client.
